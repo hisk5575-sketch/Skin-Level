@@ -3,61 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рамадан: Ифтар Садака</title>
+    <title>RAMADAN 2026 | LAYTH</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #1a0505; color: #fff; overflow-x: hidden; }
-        h1, h2 { font-family: 'Playfair Display', serif; }
-        .bg-wine { background-color: #3b0202; }
-        .text-gold { color: #d4af37; }
-        .border-gold { border-color: #d4af37; }
-        .fade-in { animation: fadeIn 1.5s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        :root {
+            --dark: #0a0a0a;
+            --blood: #660000;
+            --gold: #d4af37;
+        }
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: var(--dark); 
+            color: #fff;
+            background: radial-gradient(circle at top right, #2a0000, #0a0a0a 60%);
+        }
+        .card-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .btn-action {
+            background: linear-gradient(45deg, #800000, #b30000);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .btn-action:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(179, 0, 0, 0.4);
+        }
+        .text-gradient {
+            background: linear-gradient(to bottom, #fff 0%, #666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .sbp-badge {
+            background: #fff;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 900;
+            font-size: 10px;
+        }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-4 md:p-8">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <header class="text-center mb-12 fade-in">
-        <p class="text-gold italic text-lg mb-2">Ас-саляму алейкум ва-рахматуллахи ва-баракатух</p>
-        <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 uppercase">Священный Рамадан</h1>
-        <div class="h-[1px] w-32 bg-gold mx-auto opacity-50"></div>
-    </header>
+    <div class="max-w-xl w-full">
+        <header class="text-center mb-12">
+            <h2 class="text-xs tracking-[0.5em] text-red-600 font-bold mb-4 uppercase">Bismillah</h2>
+            <h1 class="text-6xl md:text-7xl font-black mb-2 text-gradient tracking-tighter italic">RAMADAN</h1>
+            <p class="text-gray-500 font-light tracking-[0.2em] text-sm uppercase">Support Project 2026</p>
+        </header>
 
-    <main class="bg-wine p-8 rounded-3xl shadow-2xl max-w-md w-full border border-red-900/30 text-center fade-in" style="animation-delay: 0.3s;">
-        <h2 class="text-2xl text-white mb-4 italic">Накорми постящегося</h2>
-        <p class="text-gray-400 text-sm mb-8 leading-relaxed">
-            «Кто накормит соблюдающего пост во время разговения (ифтара), тому будет записана такая же награда, как и постящемуся...»
-        </p>
+        <div class="card-glass rounded-[40px] p-10 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-6 opacity-10 text-8xl italic font-black">2026</div>
+            
+            <p class="text-xl text-white font-light mb-10 leading-relaxed">
+                <span class="text-red-600 font-bold">Ас-саляму алейкум.</span> Мы открываем сбор на воду и финики. Каждый рубль превращается в награду.
+            </p>
 
-        <div class="mb-10 p-5 bg-black/20 rounded-2xl border border-gold/10 relative group">
-            <p class="text-[10px] uppercase tracking-[3px] text-gold/60 mb-3">Номер вашей карты</p>
-            <p id="cardNumber" class="text-xl md:text-2xl font-mono tracking-widest text-white mb-3">2200 7019 7567 8803</p>
-            <button onclick="copyCard()" class="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest border-b border-gray-700 pb-1">
-                Копировать номер
+            <div class="mb-10 group cursor-pointer" onclick="copyCard()">
+                <label class="text-[10px] text-gray-500 uppercase tracking-widest mb-3 block">Direct Transfer</label>
+                <div class="flex items-center justify-between border-b border-white/10 pb-4 group-hover:border-red-600 transition-colors">
+                    <span id="cardNumber" class="text-2xl md:text-3xl font-bold tracking-tighter">2200 7019 7567 8803</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 group-hover:text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="mb-12">
+                <div class="flex items-end gap-4">
+                    <div class="flex-1">
+                        <label class="text-[10px] text-gray-500 uppercase tracking-widest mb-3 block">Amount (RUB)</label>
+                        <input type="number" id="sumInput" placeholder="0.00" 
+                            class="bg-transparent text-5xl font-bold w-full outline-none border-none placeholder:text-white/5">
+                    </div>
+                </div>
+                <div id="calcStatus" class="mt-4 text-sm text-red-600 font-bold uppercase tracking-widest opacity-0 transition-opacity">
+                    Will feed <span id="peopleCount">0</span> people
+                </div>
+            </div>
+
+            <button onclick="payAction()" class="btn-action w-full py-6 rounded-2xl text-white font-black flex items-center justify-center gap-3">
+                <span>Поддержать</span>
+                <span class="sbp-badge">СБП</span>
             </button>
         </div>
 
-        <div class="mb-10">
-            <input type="number" id="sumInput" placeholder="Введите сумму..." 
-                class="w-full bg-transparent border-b border-gold/40 py-3 text-center outline-none text-2xl focus:border-gold transition-all placeholder:text-gray-700">
-            <p id="calcText" class="text-sm mt-4 text-gold/80 italic">Даже один финик имеет значение</p>
-        </div>
+        <footer class="mt-12 text-center">
+            <p class="text-[10px] text-gray-600 uppercase tracking-[0.3em]">May Allah reward you with goodness</p>
+        </footer>
+    </div>
 
-        <button onclick="openBarakah()" class="w-full bg-gold text-black font-bold py-5 rounded-2xl hover:bg-yellow-500 transition-all active:scale-95 shadow-lg shadow-gold/10 uppercase tracking-widest text-sm">
-            Поддержать проект
-        </button>
-    </main>
-
-    <div id="barakahModal" class="fixed inset-0 bg-black/95 backdrop-blur-sm flex items-center justify-center hidden z-50 p-6">
-        <div class="text-center max-w-sm">
-            <div class="text-5xl mb-6">🌙</div>
-            <h2 class="text-3xl text-gold mb-2">Джазакаллаху Хайран!</h2>
-            <p class="text-white text-lg mb-8 italic">«Пусть Аллах воздаст тебе благом в обоих мирах»</p>
-            <p class="text-gray-400 text-sm mb-10">Ваше намерение принято. Пожалуйста, завершите перевод в приложении вашего банка.</p>
-            <button onclick="closeBarakah()" class="border border-gold/30 px-8 py-3 rounded-full text-gold text-xs uppercase tracking-widest hover:bg-gold/10">
-                Закрыть
-            </button>
+    <div id="modal" class="fixed inset-0 bg-black flex items-center justify-center hidden z-50 transition-all">
+        <div class="text-center p-10">
+            <h2 class="text-6xl font-black text-red-700 mb-4 italic">JAZAKALLAH!</h2>
+            <p class="text-white text-xl font-light tracking-widest uppercase mb-12">Пусть Аллах воздаст тебе благом</p>
+            <button onclick="closeModal()" class="text-gray-500 hover:text-white uppercase text-xs tracking-[0.5em] border-b border-gray-800 pb-2">Вернуться</button>
         </div>
     </div>
 
@@ -65,28 +110,30 @@
         function copyCard() {
             const num = "2200701975678803";
             navigator.clipboard.writeText(num);
-            alert("Номер скопирован. Пусть Аллах облегчит ваши дела!");
+            alert("Номер скопирован.");
         }
 
         document.getElementById('sumInput').addEventListener('input', function(e) {
             const val = e.target.value;
-            const text = document.getElementById('calcText');
+            const status = document.getElementById('calcStatus');
+            const count = document.getElementById('peopleCount');
             if (val > 0) {
-                const kits = Math.floor(val / 50); 
-                text.innerText = `Это поможет обеспечить водой и финиками ${kits} чел.`;
+                status.style.opacity = "1";
+                count.innerText = Math.floor(val / 50);
             } else {
-                text.innerText = "Даже один финик имеет значение";
+                status.style.opacity = "0";
             }
         });
 
-        function openBarakah() {
-            document.getElementById('barakahModal').classList.remove('hidden');
+        function payAction() {
+            document.getElementById('modal').classList.remove('hidden');
+            // Здесь можно добавить линк на банк, если нужно
+            // window.location.href = "https://qr.nspk.ru/..."; 
         }
 
-        function closeBarakah() {
-            document.getElementById('barakahModal').classList.add('hidden');
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
         }
     </script>
-
 </body>
 </html>
